@@ -4,11 +4,11 @@ using Homer.Shared.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using System;
 
 namespace Homer.Api
@@ -22,10 +22,9 @@ namespace Homer.Api
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc();
 
             services.AddDbContext<HomerDbContext>(options =>
                 options.UseSqlServer(
@@ -40,7 +39,7 @@ namespace Homer.Api
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "Homer API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Homer API", Version = "v1" });
                 //c.AddSecurityDefinition("oauth2", new OAuth2Scheme
                 //{
                 //    Type = "oauth2",
@@ -63,8 +62,7 @@ namespace Homer.Api
             services.AddHomerServices();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseForwardedHeaders();
 
@@ -98,7 +96,11 @@ namespace Homer.Api
                 //});
             });
 
-            app.UseMvc();
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+            });
         }
     }
 }
