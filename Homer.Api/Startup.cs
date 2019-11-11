@@ -37,6 +37,14 @@ namespace Homer.Api
                 options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
             });
 
+            services.AddCors(config =>
+            {
+                config.AddPolicy("default", policy => policy
+                    .WithOrigins("http://localhost:8080")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod());
+            });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Homer API", Version = "v1" });
@@ -78,6 +86,8 @@ namespace Homer.Api
 
             app.UseHttpsRedirection();
 
+            app.UseCors("default");
+
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
 
@@ -87,6 +97,7 @@ namespace Homer.Api
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Homer API V1");
                 c.RoutePrefix = string.Empty;
+                c.DocumentTitle = "Homer API Docs";
 
                 //c.OAuthClientId("0oam5vnvhdJ285M160h7");
                 //c.OAuthClientSecret("Hv36qRZzX92H3_kbu0pIb2jC8uc5PnPlgcD-Dr-b");
