@@ -11,8 +11,8 @@ export default class ShoppingService {
     return response
   }
 
-  async getListItems (listId) {
-    var response = await apiService.get(`shopping-lists/${listId}/items`)
+  async getListItems (listId, purchased) {
+    var response = await apiService.get(`shopping-lists/${listId}/items?purchased=${purchased}`)
     return response
   }
 

@@ -35,10 +35,11 @@ namespace Homer.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ShoppingItemModel>>> GetItems(int listId)
+        public async Task<ActionResult<IEnumerable<ShoppingItemModel>>> GetItems([FromRoute] int listId, [FromQuery] bool? purchased = false)
         {
             var items = await _shoppingItemRepository.Table
-                .Where(x => x.ListId == listId)
+                .Where(x => x.ListId == listId
+                    && (!purchased.HasValue || x.PurchasedOn.HasValue == purchased.Value))
                 .ProjectTo<ShoppingItemModel>(_mapper.ConfigurationProvider)
                 .ToListAsync();
 

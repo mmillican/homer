@@ -6,7 +6,8 @@ export default {
   state: {
     lists: [ ],
     currentList: null,
-    listItems: [ ]
+    listItems: [ ],
+    filterPurchased: false
   },
 
   getters: {
@@ -29,6 +30,10 @@ export default {
       state.listItems = list.items
     },
 
+    setListFilter (state, purchased) {
+      state.filterPurchased = purchased
+    },
+
     addItemToList (state, item) {
       state.listItems.push(item)
     },
@@ -44,11 +49,15 @@ export default {
 
       commit('setLists', lists)
     },
-    async getList ({ commit }, listId) {
+    async getList ({ state, commit }, listId) {
       var list = await shoppingService.getList(listId)
-      var items = await shoppingService.getListItems(listId)
+      var items = await shoppingService.getListItems(listId, state.filterPurchased)
 
       commit('setCurrentList', { list, items })
+    },
+    async filterList ({ state, dispatch, commit }, purchased) {
+      commit('setListFilter', purchased)
+      await dispatch('getList', state.currentList.id)
     },
     async addItemToList ({ commit }, data) {
       var newItem = await shoppingService.addListItem(data.listId, data.item)

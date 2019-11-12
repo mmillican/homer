@@ -6,6 +6,14 @@
     <div class="row">
       <div class="col-md-3">
         <shopping-lists />
+
+        <div class="list-filter my-4">
+          <select class="form-control" v-model="filterPurchased" @change="setFilter">
+            <option value="">All</option>
+            <option value="false">Not purchased</option>
+            <option value="true">Purchased</option>
+          </select>
+        </div>
       </div>
       <div class="col-md-9">
         <add-list-item />
@@ -44,7 +52,7 @@ export default {
   },
   data () {
     return {
-
+      filterPurchased: this.$store.state.shopping.filterPurchased
     }
   },
   computed: {
@@ -62,6 +70,9 @@ export default {
   methods: {
     async getList () {
       await this.$store.dispatch('shopping/getList', this.$route.params.listId)
+    },
+    async setFilter () {
+      await this.$store.dispatch('shopping/filterList', this.filterPurchased)
     },
     async updatePurchaseStatus (item) {
       await this.$store.dispatch('shopping/updatePurchaseStatus', item)
