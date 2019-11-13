@@ -7,7 +7,7 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueMoment from 'vue-moment'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faTrash, faCheckSquare } from '@fortawesome/free-solid-svg-icons'
+import { faTrash, faCheckSquare, faChild, faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 // TODO: Replace with SCSS version
@@ -21,7 +21,7 @@ Vue.use(VueMoment)
 
 Vue.use(VueAxios, axios)
 
-library.add(faTrash, faCheckSquare)
+library.add(faTrash, faCheckSquare, faChild, faStar)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
