@@ -4,14 +4,16 @@ using Homer.Shared.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Homer.Shared.Data.Migrations
 {
     [DbContext(typeof(HomerDbContext))]
-    partial class HomerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191112044005_MealPlanningInitial")]
+    partial class MealPlanningInitial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

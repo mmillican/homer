@@ -1,4 +1,5 @@
-﻿using Homer.Shared.Entities.Shopping;
+﻿using Homer.Shared.Entities.Meals;
+using Homer.Shared.Entities.Shopping;
 using Homer.Shared.Entities.TaskLists;
 using Homer.Shared.Entities.Users;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,9 @@ namespace Homer.Shared.Data
 
         public DbSet<ShoppingList> ShoppingLists { get; set; }
         public DbSet<ShoppingItem> ShoppingItems { get; set; }
+
+        public DbSet<Meal> Meals { get; set; }
+        public DbSet<ScheduledMeal> ScheduledMeals { get; set; }
 
         public HomerDbContext(DbContextOptions<HomerDbContext> options)
             : base(options)
