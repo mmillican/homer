@@ -13,7 +13,8 @@ const routes = [
     component: () => import('../views/meal-plans/MealPlanning.vue'),
     children: [
       { path: 'meals', name: 'meals', component: () => import('../views/meal-plans/Meals.vue') },
-      { path: 'meals/new', name: 'add-meal', component: () => import('../views/meal-plans/AddMeal.vue') }
+      { path: 'meals/new', name: 'add-meal', component: () => import('../views/meal-plans/AddMeal.vue') },
+      { path: 'meals/edit/:id', name: 'edit-meal', component: () => import('../views/meal-plans/EditMeal.vue') }
 
     ]
   }

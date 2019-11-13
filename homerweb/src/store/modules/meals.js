@@ -4,7 +4,8 @@ export default {
   namespaced: true,
 
   state: {
-    meals: [ ]
+    meals: [ ],
+    currentMeal: null
   },
 
   getters: {
@@ -13,6 +14,10 @@ export default {
   mutations: {
     setMeals (state, meals) {
       state.meals = meals
+    },
+
+    setCurrentMeal (state, meal) {
+      state.currentMeal = meal
     },
 
     addMeal (state, meal) {
@@ -30,15 +35,25 @@ export default {
 
       commit('setMeals', meals)
     },
-    async addMeal ({ commit }, data) {
-      var newItem = await mealsService.addMeal(data)
+    async getMeal ({ commit }, id) {
+      var meal = await mealsService.getMeal(id)
+
+      commit('setCurrentMeal', meal)
+    },
+    async addMeal ({ commit }, meal) {
+      var newItem = await mealsService.addMeal(meal)
 
       commit('addMeal', newItem)
     },
-    async deleteMeal ({ commit }, item) {
-      await mealsService.deleteMeal(item)
+    async updateMeal ({ commit }, meal) {
+      await mealsService.updateMeal(meal)
 
-      commit('deleteMeal', item)
+      commit('setCurrentMeal', meal)
+    },
+    async deleteMeal ({ commit }, meal) {
+      await mealsService.deleteMeal(meal)
+
+      commit('deleteMeal', meal)
     }
   }
 }
