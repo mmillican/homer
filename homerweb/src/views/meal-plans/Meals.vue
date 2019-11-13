@@ -3,7 +3,7 @@
     <h1>Meals</h1>
 
     <div class="actions mb-2">
-      <router-link to="meals/new" class="btn btn-success">Add Meal</router-link>
+      <router-link to="./new" class="btn btn-success">Add Meal</router-link>
     </div>
 
     <table class="table table-striped table-hover">

@@ -63,9 +63,10 @@ export default {
   methods: {
     async saveMeal () {
       this.meal.prepEffort = this.meal.prepEffort * 1
-      await this.$store.dispatch('meals/addMeal', this.meal)
-
-      this.$router.navigate('../')
+      await this.$store.dispatch('meals/addMeal', this.meal).then(() => {
+        this.$store.dispatch('alerts/addSuccess', 'The meal has been added.')
+        this.$router.push('./')
+      })
     }
   }
 }
