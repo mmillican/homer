@@ -21,6 +21,11 @@ namespace Homer.Api.Models
             CreateMap<Meal, MealModel>()
                 .ForMember(x => x.PrepEffort, map => map.MapFrom(x => (int)x.PrepEffort))
                 .ForMember(x => x.PrepEffortName, map => map.MapFrom(x => x.PrepEffort.ToString("G")));
+
+            CreateMap<ScheduledMeal, ScheduledMealModel>()
+                .ForMember(x => x.MealDate, map => map.MapFrom(x => x.MealDate.ToString("yyyy-MM-dd")))
+                .ForMember(x => x.MealTimeId, map => map.MapFrom(x => (int)x.MealTime))
+                .ForMember(x => x.MealTime, map => map.MapFrom(x => x.MealTime.ToString("G")));
         }
     }
 }
