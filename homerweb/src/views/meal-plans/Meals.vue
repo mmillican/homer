@@ -16,14 +16,7 @@
       </tr>
       <tr v-for="meal in meals" v-bind:key="meal.id">
         <td>
-          <ul class="list-inline mb-0">
-            <li class="list-inline-item">
-              <font-awesome-icon v-if="meal.isKidFriendly" icon="child" class="text-primary" title="Kid friendly" />
-            </li>
-            <li class="list-inline-item">
-              <font-awesome-icon v-if="meal.isFavorite" icon="star" class="text-warning" title="Favorite" />
-            </li>
-          </ul>
+          <meal-icons :meal="meal" />
         </td>
         <td>{{ meal.name }}</td>
         <td>{{ meal.prepEffortName }}</td>
@@ -49,7 +42,11 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
+import MealIcons from '../../components/meal-planning/MealIcons'
 export default {
+  components: {
+    MealIcons
+  },
   data () {
     return {
 

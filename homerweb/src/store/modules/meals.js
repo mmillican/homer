@@ -5,10 +5,20 @@ export default {
 
   state: {
     meals: [ ],
-    currentMeal: null
+    currentMeal: null,
+    scheduledMeals: [ ]
   },
 
   getters: {
+    meals (state) {
+      return state.meals
+    },
+    scheduledMeals (state) {
+      return state.scheduledMeals
+    },
+    scheduledMealsForDate (state, date) {
+      return state.scheduledMeals.filter(x => x.mealDate === date)
+    }
   },
 
   mutations: {
@@ -26,6 +36,14 @@ export default {
 
     deleteMeal (state, meal) {
       state.meals.splice(state.meals.indexOf(meal), 1)
+    },
+
+    setScheduledMeals (state, meals) {
+      state.scheduledMeals = meals
+    },
+
+    addScheduledMeal (state, meal) {
+      state.scheduledMeals.push(meal)
     }
   },
 
@@ -54,6 +72,16 @@ export default {
       await mealsService.deleteMeal(meal)
 
       commit('deleteMeal', meal)
+    },
+    async fetchScheduledMeals ({ commit }, params) {
+      var meals = await mealsService.getScheduledMeals(params.startDate, params.endDate)
+
+      commit('setScheduledMeals', meals)
+    },
+    async addScheduledMeal ({ commit }, meal) {
+      var newMeal = await mealsService.addScheduledMeal(meal)
+
+      commit('addScheduledMeal', newMeal)
     }
   }
 }
