@@ -3,33 +3,42 @@
   <div class="meal-planner">
     <h1>Meal Planner</h1>
 
-    <daily-meals-stacked v-for="date in dates" :key="date" :date="date" :meals="getMealsForDate(date)" @editMealTime="editMealTime" />
+    <daily-meals-stacked v-for="date in dates" :key="date" :date="date" :meals="getMealsForDate(date)" @openMealEditor="openMealEditor" />
 
     <b-modal id="modal-mt-editor" hide-footer>
       <template v-slot:modal-title>
-        Editing {{ editingMealTime.date | moment('dddd') }}'s {{ getMealTimeName(editingMealTime.timeId) }}
+        Add Meal for {{ editingMealTime.date | moment('dddd') }}
       </template>
       <form @submit.prevent="addScheduledMeal" class="d-block text-center">
-        <multiselect v-model="editingMealTime.mealId"  track-by="id" label="name" :options="meals" :show-labels="true">
-          <template slot="singleLabel" slot-scope="props">
-            <div class="option__desc">
-              <span class="option__title">{{ props.option.name }}</span>
+        <div class="form-group">
+          <select v-model="editingMealTime.mealTimeId" class="form-control">
+          <option value="1">Breakfast</option>
+          <option value="2">Lunch</option>
+          <option value="3">Dinner</option>
+        </select>
+        </div>
+        <div class="form-group">
+          <multiselect v-model="editingMealTime.mealId"  track-by="id" label="name" :options="meals" :show-labels="true">
+            <template slot="singleLabel" slot-scope="props">
+              <div class="option__desc">
+                <span class="option__title">{{ props.option.name }}</span>
 
-              <span class="option__small float-right">
-                <meal-icons :meal="props.option" />
-              </span>
-            </div>
-          </template>
-          <template slot="option" slot-scope="props">
-            <div class="option__desc">
-              <span class="option__title">{{ props.option.name }}</span>
+                <span class="option__small float-right">
+                  <meal-icons :meal="props.option" />
+                </span>
+              </div>
+            </template>
+            <template slot="option" slot-scope="props">
+              <div class="option__desc">
+                <span class="option__title">{{ props.option.name }}</span>
 
-              <span class="option__small float-right">
-                <meal-icons :meal="props.option" />
-              </span>
-            </div>
-          </template>
-        </multiselect>
+                <span class="option__small float-right">
+                  <meal-icons :meal="props.option" />
+                </span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
         <b-button type="submit" class="mt-3" variant="primary" block>Add Meal</b-button>
       </form>
     </b-modal>
@@ -100,16 +109,15 @@ export default {
 
       return ''
     },
-    editMealTime (date, timeId) {
+    openMealEditor (date) {
       this.editingMealTime.date = date
-      this.editingMealTime.timeId = timeId
 
       this.$bvModal.show('modal-mt-editor')
     },
     async addScheduledMeal () {
       var meal = {
         mealDate: this.editingMealTime.date,
-        mealTimeId: this.editingMealTime.timeId,
+        mealTimeId: this.editingMealTime.mealTimeId * 1,
         mealid: this.editingMealTime.mealId.id
       }
 
