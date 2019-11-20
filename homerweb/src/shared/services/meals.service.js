@@ -35,6 +35,10 @@ export default class MealsService {
     var response = await apiService.post('meals/scheduled', scheduledMeal)
     return response
   }
+
+  async removeScheduledMeal (scheduledMeal) {
+    await apiService.delete(`meals/scheduled/${scheduledMeal.id}`)
+  }
 }
 
 export const mealsService = new MealsService()

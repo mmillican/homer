@@ -44,6 +44,10 @@ export default {
 
     addScheduledMeal (state, meal) {
       state.scheduledMeals.push(meal)
+    },
+
+    removeScheduledMeal (state, meal) {
+      state.scheduledMeals.splice(state.scheduledMeals.indexOf(meal), 1)
     }
   },
 
@@ -82,6 +86,11 @@ export default {
       var newMeal = await mealsService.addScheduledMeal(meal)
 
       commit('addScheduledMeal', newMeal)
+    },
+    async removeScheduledMeal ({ commit }, meal) {
+      await mealsService.removeScheduledMeal(meal)
+
+      commit('removeScheduledMeal', meal)
     }
   }
 }

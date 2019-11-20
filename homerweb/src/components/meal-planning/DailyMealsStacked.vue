@@ -13,21 +13,15 @@
       <dl>
         <dt>Breakfast</dt>
         <dd>
-          <ul class="list-unstyled">
-            <li v-for="meal in breakfastMeals" v-bind:key="meal.id">{{ meal.meal.name }}</li>
-          </ul>
+          <planned-meal-list :meals="breakfastMeals" />
         </dd>
         <dt>Lunch</dt>
         <dd>
-          <ul class="list-unstyled">
-            <li v-for="meal in lunchMeals" v-bind:key="meal.id">{{ meal.meal.name }}</li>
-          </ul>
+          <planned-meal-list :meals="lunchMeals" />
         </dd>
         <dt>Dinner</dt>
         <dd>
-          <ul class="list-unstyled">
-            <li v-for="meal in dinnerMeals" v-bind:key="meal.id">{{ meal.meal.name }}</li>
-          </ul>
+          <planned-meal-list :meals="dinnerMeals" />
         </dd>
       </dl>
     </div>
@@ -35,6 +29,8 @@
 </template>
 
 <script>
+import PlannedMealList from './PlannedMealList'
+
 export default {
   props: {
     date: {
@@ -44,6 +40,9 @@ export default {
     meals: {
       type: Array
     }
+  },
+  components: {
+    PlannedMealList
   },
   computed: {
     breakfastMeals () {
