@@ -1,4 +1,4 @@
-// import Vue from 'vue'
+import Vue from 'vue'
 import axios from 'axios'
 
 const client = axios.create({
@@ -10,13 +10,15 @@ const client = axios.create({
 
 export default {
   async execute (method, resource, data) {
-    // TODO: Access token
+    let accessToken = await Vue.prototype.$auth.getAccessToken()
 
     return client({
       method,
       url: resource,
       data,
-      headers: { }
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
     }).then(response => {
       return response.data
     })

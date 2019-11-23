@@ -37,28 +37,28 @@ export default {
     }
   },
   created () {
-    // this.authenticate();
+    this.authenticate()
   },
   watch: {
-    // '$route': 'authenticate'
+    '$route': 'authenticate'
   },
   methods: {
     async authenticate () {
-      // this.isAuthenticated = await this.$auth.isAuthenticated();
-      // var user = await this.$auth.getUser();
-      // if (user) {
-      //   this.userName = user.name;
-      // }
+      this.isAuthenticated = await this.$auth.isAuthenticated()
+      var user = await this.$auth.getUser()
+      if (user) {
+        this.userName = user.name
+      }
     },
     login () {
-      // this.$auth.loginRedirect('/')
+      this.$auth.loginRedirect('/')
     },
     async logout () {
-      // await this.$auth.logout()
-      // await this.authenticate()
+      await this.$auth.logout()
+      await this.authenticate()
 
-      // // Navigate back to home
-      // this.$router.push({ path: '/' })
+      // Navigate back to home
+      this.$router.push({ path: '/' })
     }
   }
 }

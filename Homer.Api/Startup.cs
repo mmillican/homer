@@ -56,7 +56,8 @@ namespace Homer.Api
                 config.AddPolicy("default", policy => policy
                     .WithOrigins("http://localhost:8080")
                     .AllowAnyHeader()
-                    .AllowAnyMethod());
+                    .AllowAnyMethod()
+                    .AllowCredentials());
             });
 
             var oktaDomain = $"https://{Configuration["Auth:OktaDomain"]}";
@@ -69,7 +70,8 @@ namespace Homer.Api
             })
             .AddOktaWebApi(new OktaWebApiOptions()
             {
-                OktaDomain = oktaDomain
+                OktaDomain = oktaDomain,
+                Audience = "api://default"
             });
             services.AddAuthorization();
 
