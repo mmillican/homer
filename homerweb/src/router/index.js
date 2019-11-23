@@ -16,12 +16,13 @@ Vue.use(VueRouter)
 
 const routes = [
   { path: '/', name: 'home', component: Home },
-  { path: '/shopping/:listId?', name: 'shopping', component: () => import('../views/Shopping.vue') },
-  { path: '/implicit/callback', component: Auth.handleCallback() },
+  { path: '/shopping/:listId?', name: 'shopping', component: () => import('../views/Shopping.vue'), meta: { requiresAuth: true } },
+  { path: '/implicit/callback', component: Auth.handleCallback(), meta: { requiresAuth: true } },
   {
     path: '/meal-plans',
     name: 'meal-planning',
     component: () => import('../views/meal-plans/MealPlanning.vue'),
+    meta: { requiresAuth: true },
     children: [
       { path: 'planner', name: 'meal-planner', component: () => import('../views/meal-plans/Planner.vue') },
       { path: 'meals', name: 'meals', component: () => import('../views/meal-plans/Meals.vue') },
@@ -38,6 +39,21 @@ const router = new VueRouter({
   routes,
   linkActiveClass: 'active',
   linkExactActiveClass: 'active'
+})
+
+router.beforeEach(async (to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!await Vue.prototype.$auth.isAuthenticated()) {
+      next({
+        path: '/',
+        query: { redirect: to.fullPath }
+      })
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
 })
 
 export default router
