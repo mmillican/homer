@@ -5,17 +5,22 @@
         <font-awesome-icon icon="trash" class="text-danger" title="Remove meal" />
       </b-button>
       {{ meal.meal.name }}
+      <meal-icons :meal="meal.meal" class="d-inline" />
     </li>
   </ul>
 </template>
 
 <script>
+import MealIcons from './MealIcons'
 export default {
   props: {
     meals: {
       type: Array,
       required: true
     }
+  },
+  components: {
+    MealIcons
   },
   methods: {
     async removeMeal (meal) {
