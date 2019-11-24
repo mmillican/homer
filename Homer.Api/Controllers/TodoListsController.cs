@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Homer.Api.Controllers
 {
-    [Route("api/todo-lists")]
+    [Route("/todo-lists")]
     [ApiController]
     public class TodoListsController : ControllerBase
     {

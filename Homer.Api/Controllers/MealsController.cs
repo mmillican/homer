@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Homer.Api.Controllers
 {
-    [Route("api/meals")]
+    [Route("/meals")]
     [ApiController]
     public class MealsController : ControllerBase
     {

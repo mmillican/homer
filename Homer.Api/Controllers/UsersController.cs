@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Homer.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -19,14 +19,14 @@ namespace Homer.Api.Controllers
             _context = context;
         }
 
-        // GET: api/Users
+        // GET: /Users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             return await _context.Users.ToListAsync();
         }
 
-        // GET: api/Users/5
+        // GET: /Users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
@@ -40,7 +40,7 @@ namespace Homer.Api.Controllers
             return user;
         }
 
-        // PUT: api/Users/5
+        // PUT: /Users/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, User user)
         {
@@ -70,7 +70,7 @@ namespace Homer.Api.Controllers
             return NoContent();
         }
 
-        // POST: api/Users
+        // POST: /Users
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
@@ -80,7 +80,7 @@ namespace Homer.Api.Controllers
             return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }
 
-        // DELETE: api/Users/5
+        // DELETE: /Users/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<User>> DeleteUser(int id)
         {

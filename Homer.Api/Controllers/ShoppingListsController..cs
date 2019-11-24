@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Homer.Api.Controllers
 {
-    [Route("api/shopping-lists")]
+    [Route("/shopping-lists")]
     [ApiController]
     public class ShoppingListsController : ControllerBase
     {
@@ -32,7 +32,7 @@ namespace Homer.Api.Controllers
             _logger = logger;
         }
 
-        // GET: api/TaskLists
+        // GET: /TaskLists
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ShoppingListModel>>> GetLists()
         {
@@ -43,7 +43,7 @@ namespace Homer.Api.Controllers
             return lists;
         }
 
-        // GET: api/TaskLists/5
+        // GET: /TaskLists/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ShoppingListModel>> GetList(int id)
         {
@@ -57,7 +57,7 @@ namespace Homer.Api.Controllers
             return model;
         }
 
-        // POST: api/TaskLists
+        // POST: /TaskLists
         [HttpPost]
         public async Task<ActionResult<ShoppingListModel>> Create(ShoppingListModel model)
         {
@@ -83,7 +83,7 @@ namespace Homer.Api.Controllers
             }
         }
 
-        // PUT: api/TaskLists/5
+        // PUT: /TaskLists/5
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, ShoppingListModel model)
         {
@@ -110,7 +110,7 @@ namespace Homer.Api.Controllers
             }
         }
 
-        // DELETE: api/TaskLists/5
+        // DELETE: /TaskLists/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

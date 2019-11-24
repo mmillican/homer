@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Homer.Api.Controllers
 {
-    [Route("api/shopping-lists/{listId}/items")]
+    [Route("/shopping-lists/{listId}/items")]
     [ApiController]
     public class ShoppingItemsController : ControllerBase
     {
