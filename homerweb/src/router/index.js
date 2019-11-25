@@ -4,10 +4,10 @@ import Home from '../views/Home.vue'
 import Auth from '@okta/okta-vue'
 
 Vue.use(Auth, {
-  issuer: 'https://dev-510139.oktapreview.com/oauth2/default',
-  clientId: '0oaojmjqdzCch3YTU0h7',
-  redirectUri: 'http://localhost:8080/implicit/callback',
-  // audience: 'http://localhost:8080',
+  issuer: process.env.VUE_APP_OKTA_URL,
+  clientId: process.env.VUE_APP_OKTA_CLIENTID,
+  redirectUri: process.env.VUE_APP_AUTH_REDIR_URL,
+  audience: 'http://localhost:8080',
   scopes: ['openid', 'profile', 'email'],
   pkce: true
 })
@@ -41,19 +41,6 @@ const router = new VueRouter({
   linkExactActiveClass: 'active'
 })
 
-router.beforeEach(async (to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!await Vue.prototype.$auth.isAuthenticated()) {
-      next({
-        path: '/',
-        query: { redirect: to.fullPath }
-      })
-    } else {
-      next()
-    }
-  } else {
-    next()
-  }
-})
+router.beforeEach(Vue.prototype.$auth.authRedirectGuard())
 
 export default router
