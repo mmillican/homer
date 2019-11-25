@@ -54,7 +54,7 @@ namespace Homer.Api
             services.AddCors(config =>
             {
                 config.AddPolicy("default", policy => policy
-                    .WithOrigins("http://localhost:8080")
+                    .WithOrigins("http://localhost:8080", "https://home.millican.me")
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials());
