@@ -16,25 +16,30 @@
         </div>
       </div>
       <div class="col-md-9">
-        <add-list-item />
+        <template v-if="list">
+          <add-list-item />
 
-        <table class="table">
-          <tr v-for="item in items" v-bind:key="item.id" :class="{ 'purchased': item.purchasedOn }">
-            <td style="width: 10%">
-              <button class="btn btn-link" @click="updatePurchaseStatus(item)">
-                <font-awesome-icon icon="check-square" />
-              </button>
-            </td>
-            <td style="width: 80%">
-              {{ item.name }}
-            </td>
-            <td style="width: 10%">
-              <button class="btn btn-link" @click="deleteItem(item)">
-                <font-awesome-icon class="text-danger" icon="trash" />
-              </button>
-            </td>
-          </tr>
-        </table>
+          <table class="table">
+            <tr v-for="item in items" v-bind:key="item.id" :class="{ 'purchased': item.purchasedOn }">
+              <td style="width: 10%">
+                <button class="btn btn-link" @click="updatePurchaseStatus(item)">
+                  <font-awesome-icon icon="check-square" />
+                </button>
+              </td>
+              <td style="width: 80%">
+                {{ item.name }}
+              </td>
+              <td style="width: 10%">
+                <button class="btn btn-link" @click="deleteItem(item)">
+                  <font-awesome-icon class="text-danger" icon="trash" />
+                </button>
+              </td>
+            </tr>
+          </table>
+        </template>
+        <div class="alert alert-info" v-else>
+          Select a list to begin.
+        </div>
       </div>
     </div>
   </div>
@@ -69,7 +74,9 @@ export default {
   },
   methods: {
     async getList () {
-      await this.$store.dispatch('shopping/getList', this.$route.params.listId)
+      if (this.$route.params.listId) {
+        await this.$store.dispatch('shopping/getList', this.$route.params.listId)
+      }
     },
     async setFilter () {
       await this.$store.dispatch('shopping/filterList', this.filterPurchased)
