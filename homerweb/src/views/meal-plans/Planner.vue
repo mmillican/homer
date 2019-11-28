@@ -2,6 +2,7 @@
 
   <div class="meal-planner">
     <h1>Meal Planner</h1>
+    <week-navigator :weekStart="startOfWeek" />
 
     <daily-meals-stacked v-for="date in dates" :key="date" :date="date" :meals="getMealsForDate(date)" @openMealEditor="openMealEditor" />
 
@@ -48,12 +49,14 @@
 <script>
 import moment from 'moment'
 import Multiselect from 'vue-multiselect'
+import WeekNavigator from '../../components/meal-planning/WeekNavigator'
 import DailyMealsStacked from '../../components/meal-planning/DailyMealsStacked'
 import MealIcons from '../../components/meal-planning/MealIcons'
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
   components: {
+    WeekNavigator,
     DailyMealsStacked,
     MealIcons,
     Multiselect
@@ -79,24 +82,35 @@ export default {
       var today = moment()
       var weekStart = 3 // Wednesday - TODO: make this a setting
       var startOfWeek = moment()
-      if (today.day() >= weekStart) {
-        startOfWeek = today.day(weekStart)
+      if (this.$route.query.week) {
+        startOfWeek = moment(this.$route.query.week)
       } else {
-        startOfWeek = today.day(weekStart - 7)
+        if (today.day() >= weekStart) {
+          startOfWeek = today.day(weekStart)
+        } else {
+          startOfWeek = today.day(weekStart - 7)
+        }
       }
       return startOfWeek
     }
   },
   async created () {
-    this.generateDates()
-    await this.fetchMeals()
-    await this.getScheduledMeals()
+    await this.renderSchedule()
+  },
+  watch: {
+    '$route': 'renderSchedule'
   },
   methods: {
     ...mapActions('meals', {
       fetchMeals: 'fetchMeals'
     }),
+    async renderSchedule () {
+      this.generateDates()
+      await this.fetchMeals()
+      await this.getScheduledMeals()
+    },
     generateDates () {
+      this.dates = [ ]
       for (var idx = 0; idx < 7; idx++) {
         var date = moment(this.startOfWeek).add(idx, 'days')
         this.dates.push(date.format('YYYY-MM-DD'))
