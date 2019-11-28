@@ -74,6 +74,17 @@ export default {
     ]),
     isEditingMealTime () {
       return this.editingMealTime.date !== null && this.editingMealTime.timeId !== null
+    },
+    startOfWeek () {
+      var today = moment()
+      var weekStart = 3 // Wednesday - TODO: make this a setting
+      var startOfWeek = moment()
+      if (today.day() >= weekStart) {
+        startOfWeek = today.day(weekStart)
+      } else {
+        startOfWeek = today.day(weekStart - 7)
+      }
+      return startOfWeek
     }
   },
   async created () {
@@ -87,7 +98,7 @@ export default {
     }),
     generateDates () {
       for (var idx = 0; idx < 7; idx++) {
-        var date = moment().startOf('week').add(idx, 'days')
+        var date = moment(this.startOfWeek).add(idx, 'days')
         this.dates.push(date.format('YYYY-MM-DD'))
       }
     },
@@ -124,6 +135,8 @@ export default {
       console.log('new meal', meal)
       this.$store.dispatch('meals/addScheduledMeal', meal).then(() => {
         this.$bvModal.hide('modal-mt-editor')
+        this.editingMealTime.timeId = 0
+        this.editingMealTime.mealId = 0
       })
     }
   }
