@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Homer.Api.Controllers
@@ -33,6 +34,7 @@ namespace Homer.Api.Controllers
         public async Task<ActionResult<IEnumerable<MealModel>>> GetMeals()
         {
             var meals = await _mealsRepository.Table
+                .OrderBy(x => x.Name)
                 .ProjectTo<MealModel>(_mapper.ConfigurationProvider)
                 .ToListAsync();
 
