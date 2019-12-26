@@ -19,7 +19,7 @@
         <template v-if="list">
           <add-list-item />
 
-          <table class="table">
+          <table class="table" v-if="items.length > 0">
             <tr v-for="item in items" v-bind:key="item.id" :class="{ 'purchased': item.purchasedOn }">
               <td style="width: 10%">
                 <button class="btn btn-link" @click="updatePurchaseStatus(item)">
@@ -36,6 +36,9 @@
               </td>
             </tr>
           </table>
+          <div class="alert alert-info" v-else>
+            There are no items in this list.
+          </div>
         </template>
         <div class="alert alert-info" v-else>
           Select a list to begin.
