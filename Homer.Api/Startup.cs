@@ -112,7 +112,7 @@ namespace Homer.Api
                 //});
             });
 
-            services.AddHomerServices();
+            services.AddHomerServices(Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
