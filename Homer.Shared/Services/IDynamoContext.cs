@@ -39,6 +39,7 @@ namespace Homer.Shared.Services
         private void Initialize()
         {
             const string keyPrefix = "DynamoTables";
+            AWSConfigsDynamoDB.Context.TypeMappings[typeof(JournalEntry)] = new TypeMapping(typeof(JournalEntry), _configurationHelper.GetValue("JournalEntryTable", keyPrefix));
         }
 
         public async Task<TModel> GetByIdAsync<TModel>(string id) where TModel : class, new()
