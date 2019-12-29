@@ -17,6 +17,7 @@ Vue.use(VueRouter)
 const routes = [
   { path: '/', name: 'home', component: Home, meta: { requiresAuth: true } },
   { path: '/implicit/callback', component: Auth.handleCallback() },
+  { path: '/journal', name: 'journal', component: () => import('../views/journal/Journal.vue'), meta: { requiresAuth: true } },
   { path: '/shopping/:listId?', name: 'shopping', component: () => import('../views/Shopping.vue'), meta: { requiresAuth: true } },
   {
     path: '/meal-plans',
