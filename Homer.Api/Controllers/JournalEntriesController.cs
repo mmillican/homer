@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -33,32 +34,41 @@ namespace Homer.Api.Controllers
         public async Task<ActionResult<IEnumerable<JournalEntry>>> GetJournalEntries()
         {
             var conditions = new List<ScanCondition>();
-            conditions.Add(new ScanCondition(nameof(JournalEntry.UserId), ScanOperator.Equal, User.Identity.Name));
+            // conditions.Add(new ScanCondition("UserId", ScanOperator.Equal, User.Identity.Name));
 
             var entries = await _dataContext.GetAsync<JournalEntry>(conditions);
+            entries = entries.OrderByDescending(x => x.Date);
             return Ok(entries);
         }
 
-        [HttpGet("date/{date}")]
+        [HttpGet("{date}")]
         public async Task<ActionResult<IEnumerable<JournalEntry>>> GetJournalEntriesForDate(DateTime date)
         {
             var conditions = new List<ScanCondition>();
-            conditions.Add(new ScanCondition(nameof(JournalEntry.UserId), ScanOperator.Equal, User.FindFirstValue(ClaimTypes.NameIdentifier)));
+            // conditions.Add(new ScanCondition("UserId", ScanOperator.Equal, User.FindFirstValue(ClaimTypes.NameIdentifier)));
             conditions.Add(new ScanCondition(nameof(JournalEntry.Date), ScanOperator.Equal, date));
 
             var entries = await _dataContext.GetAsync<JournalEntry>(conditions);
             return Ok(entries);
         }
 
-        [HttpPost]
+        [HttpPost("")]
         public async Task<ActionResult<JournalEntry>> Create(JournalEntry model)
         {
             try
             {
-                model.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                model.Date = model.Date.Date;
+                var entry = new JournalEntry();
+                entry.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                entry.Date = model.Date.Date;
+                entry.Mood = model.Mood;
+                entry.Personal = model.Personal;
+                entry.Work = model.Work;
 
-                await _dataContext.SaveAsync(model);
+                await _dataContext.SaveAsync(entry);
+
+                model.Id = entry.Id;
+                model.UserId = entry.UserId;
+                model.Date = entry.Date;
 
                 _logger.LogInformation("Created journal entry");
 
@@ -71,36 +81,38 @@ namespace Homer.Api.Controllers
             }
         }
 
-        // [HttpPut("{id}")]
-        // public async Task<IActionResult> Update(int id, MealModel model)
-        // {
-        //     try
-        //     {
-        //         var meal = await _mealsRepository.GetByIdAsync(id);
-        //         if (meal == null)
-        //         {
-        //             return NotFound();
-        //         }
+        [HttpPut("{id}")]
+        public async Task<ActionResult<JournalEntry>> Update(Guid id, JournalEntry model)
+        {
+            try
+            {
+                var entry = await _dataContext.GetByIdAsync<JournalEntry>(id.ToString());
+                if (entry == null)
+                {
+                    return NotFound();
+                }
+                
+                entry.Mood = model.Mood;
+                entry.Personal = model.Personal;
+                entry.Work = model.Work;
 
-        //         meal.Name = model.Name;
-        //         meal.Description = model.Description;
-        //         meal.PrepEffort = (MealPrepEffort)model.PrepEffort;
-        //         meal.IsFavorite = model.IsFavorite;
-        //         meal.IsKidFriendly = model.IsKidFriendly;
+                await _dataContext.SaveAsync(entry);
 
-        //         await _mealsRepository.UpdateAsync(meal);
+                model.Id = entry.Id;
+                model.UserId = entry.UserId;
+                model.Date = entry.Date;
 
-        //         _logger.LogInformation("Updated meal {id}", id);
+                _logger.LogInformation("Updated journal entry");
 
-        //         return Ok(model);
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         _logger.LogError(ex, "Error updating meal {id}", id);
-        //         return StatusCode(500);
-        //     }
-        // }
-
+                return Ok(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating journal entry");
+                return StatusCode(500);
+            }
+        }
+        
         // [HttpDelete("{id}")]
         // public async Task<IActionResult> Delete(int id)
         // {
