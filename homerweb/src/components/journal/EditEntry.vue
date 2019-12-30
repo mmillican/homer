@@ -19,12 +19,9 @@
             <label for="entry-mood">Mood (overall)</label>
             <select id="entry-mood" class="form-control" v-model="entry.mood">
               <option value=""></option>
-              <option value="Happy">Happy</option>
-              <option value="Content">Content</option>
-              <option value="Sad">Sad</option>
-              <option value="Stressed">Stressed</option>
-              <option value="Frustrated">Frustrated</option>
-              <option value="Upset">Upset</option>
+              <option v-for="mood in moodOptions" :key="mood.name" :value="mood.name">
+                {{ mood.name }}
+              </option>
             </select>
           </div>
 
@@ -38,6 +35,7 @@
 <script>
 import Datepicker from 'vuejs-datepicker'
 import { mapState } from 'vuex'
+import moods from '../../shared/models/moods'
 
 export default {
   components: {
@@ -45,6 +43,7 @@ export default {
   },
   data () {
     return {
+      moodOptions: moods,
       entry: {
 
       }
