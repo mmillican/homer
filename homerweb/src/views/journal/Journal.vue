@@ -6,10 +6,16 @@
       <button class="btn btn-success" @click="addEntry">Add Entry</button>
     </div>
 
-    <editEntry v-if="isAddingNew" :entry="newEntry" @entrySaved="entrySaved" />
+    <b-modal id="modal-entry-editor" hide-footer>
+      <template v-slot:modal-title>
+        Journal Entry
+      </template>
+
+      <editEntry :entry="newEntry" @entrySaved="entrySaved" />
+    </b-modal>
 
     <div class="entries">
-      <journal-entry v-for="entry in entries" :key="entry.id" :entry="entry" :includeHr="true" />
+      <journal-entry v-for="entry in entries" :key="entry.id" :entry="entry" :includeHr="true" @openEditor="$bvModal.show('modal-entry-editor')" />
     </div>
   </div>
 </template>
@@ -49,11 +55,12 @@ export default {
       await this.$store.dispatch('journal/fetchEntries')
     },
     addEntry () {
-      this.resetNewEntry()
-      this.isAddingNew = true
+      this.$store.dispatch('journal/addEntry')
+      this.$bvModal.show('modal-entry-editor')
     },
     async entrySaved () {
       this.isAddingNew = false
+      this.$bvModal.hide('modal-entry-editor')
       await this.getEntries()
     },
     resetNewEntry () {

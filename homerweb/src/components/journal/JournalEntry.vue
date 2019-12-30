@@ -4,7 +4,7 @@
       <div class="float-right entry-actions">
         <button class="btn btn-outline-secondary" @click="editEntry">Edit</button>
       </div>
-      <h3>{{ entry.date | moment('utc', 'ddd, MMM DD') }}</h3>
+      <h3>{{ entry.date | moment('ddd, MMM DD') }}</h3>
 
       <p>
         <b>Personal</b><br />
@@ -19,18 +19,13 @@
       </p>
     </template>
 
-    <editEntry v-if="isEditing" :entry="entry" @entrySaved="entrySaved" />
-
     <hr v-if="includeHr" />
   </div>
 </template>
 
 <script>
-import EditEntry from './EditEntry'
-
 export default {
   components: {
-    EditEntry
   },
   props: {
     entry: {
@@ -44,16 +39,11 @@ export default {
     }
   },
   data () {
-    return {
-      isEditing: false
-    }
   },
   methods: {
     editEntry () {
-      this.isEditing = true
-    },
-    entrySaved () {
-      this.isEditing = false
+      this.$store.dispatch('journal/editEntry', this.entry)
+      this.$emit('openEditor')
     }
   }
 }

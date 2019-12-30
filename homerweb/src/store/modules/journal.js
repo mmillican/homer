@@ -25,7 +25,7 @@ export default {
       state.entries = entries
     },
     setEditingEntry (state, entry) {
-      state.entry = entry
+      state.editingEntry = entry
     }
   },
 
@@ -38,8 +38,17 @@ export default {
     //   var entry = await journalService.getJournalEntryForDate(entryDate)
     //   // commit('setEditingEntry', entry)
     // },
+    addEntry ({ commit }) {
+      let entry = {
+        id: null,
+        date: new Date(),
+        personal: null,
+        work: null,
+        mood: null
+      }
+      commit('setEditingEntry', entry)
+    },
     editEntry ({ commit }, entry) {
-      console.log('edit entry', entry.date)
       commit('setEditingEntry', entry)
     },
     async saveEntry ({ commit }, entry) {

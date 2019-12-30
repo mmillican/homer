@@ -1,19 +1,19 @@
 <template>
   <div class="journal-entry-editor">
     <div class="row">
-      <div class="col-md-6">
+      <div class="col-md-12">
         <form @submit.prevent="saveEntry">
           <div class="form-group">
-            <label for="entry-date">Date</label>
-            <datepicker id="entry-date" format="yyyy-MM-dd" :bootstrap-styling="true" :typable="true" v-model="entry.date" />
+            <label for="entry-date" class="sr-only">Date</label>
+            <datepicker id="entry-date" format="yyyy-MM-dd" :bootstrap-styling="true" :typeable="true" v-model="entry.date" />
           </div>
           <div class="form-group">
             <label for="entry-personal">Personal (home)</label>
-            <textarea id="entry-personal" rows="5" class="form-control" v-model="entry.personal"></textarea>
+            <textarea id="entry-personal" rows="3" class="form-control" v-model="entry.personal"></textarea>
           </div>
           <div class="form-group">
             <label for="entry-work">Work</label>
-            <textarea id="entry-work" rows="5" class="form-control" v-model="entry.work"></textarea>
+            <textarea id="entry-work" rows="3" class="form-control" v-model="entry.work"></textarea>
           </div>
           <div class="form-group">
             <label for="entry-mood">Mood (overall)</label>
@@ -37,16 +37,26 @@
 
 <script>
 import Datepicker from 'vuejs-datepicker'
+import { mapState } from 'vuex'
 
 export default {
-  props: {
-    entry: {
-      type: Object,
-      required: false
-    }
-  },
   components: {
     Datepicker
+  },
+  data () {
+    return {
+      entry: {
+
+      }
+    }
+  },
+  computed: {
+    ...mapState('journal', {
+      editing: 'editingEntry'
+    })
+  },
+  mounted () {
+    this.entry = this.editing
   },
   methods: {
     async saveEntry () {
