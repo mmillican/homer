@@ -33,19 +33,24 @@ namespace Homer.Api.Controllers
         [HttpGet("")]
         public async Task<ActionResult<IEnumerable<JournalEntry>>> GetJournalEntries()
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             var conditions = new List<ScanCondition>();
-            // conditions.Add(new ScanCondition("UserId", ScanOperator.Equal, User.Identity.Name));
+            conditions.Add(new ScanCondition(nameof(JournalEntry.UserId), ScanOperator.Equal, userId));
 
             var entries = await _dataContext.GetAsync<JournalEntry>(conditions);
             entries = entries.OrderByDescending(x => x.Date);
+
             return Ok(entries);
         }
 
         [HttpGet("{date}")]
         public async Task<ActionResult<IEnumerable<JournalEntry>>> GetJournalEntriesForDate(DateTime date)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             var conditions = new List<ScanCondition>();
-            // conditions.Add(new ScanCondition("UserId", ScanOperator.Equal, User.FindFirstValue(ClaimTypes.NameIdentifier)));
+            conditions.Add(new ScanCondition(nameof(JournalEntry.UserId), ScanOperator.Equal, userId));
             conditions.Add(new ScanCondition(nameof(JournalEntry.Date), ScanOperator.Equal, date));
 
             var entries = await _dataContext.GetAsync<JournalEntry>(conditions);
@@ -59,7 +64,7 @@ namespace Homer.Api.Controllers
             {
                 var entry = new JournalEntry();
                 entry.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                entry.Date = model.Date.Date;
+                entry.Date = model.Date;
                 entry.Mood = model.Mood;
                 entry.Personal = model.Personal;
                 entry.Work = model.Work;

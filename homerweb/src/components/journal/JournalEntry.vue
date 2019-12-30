@@ -1,6 +1,6 @@
 <template>
   <div class="journal-entry">
-    <template v-if="!isEditing">
+    <template>
       <div class="float-right entry-actions">
         <button class="btn btn-outline-secondary" @click="editEntry">Edit</button>
       </div>
@@ -37,8 +37,6 @@ export default {
       required: false,
       default: false
     }
-  },
-  data () {
   },
   methods: {
     editEntry () {

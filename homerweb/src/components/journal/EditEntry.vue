@@ -5,7 +5,7 @@
         <form @submit.prevent="saveEntry">
           <div class="form-group">
             <label for="entry-date" class="sr-only">Date</label>
-            <datepicker id="entry-date" format="yyyy-MM-dd" :bootstrap-styling="true" :typeable="true" v-model="entry.date" />
+            <datepicker id="entry-date" :bootstrap-styling="true" :typeable="true" v-model="entry.date" />
           </div>
           <div class="form-group">
             <label for="entry-personal">Personal (home)</label>
