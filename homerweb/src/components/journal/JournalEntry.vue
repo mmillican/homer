@@ -4,7 +4,7 @@
       <div class="float-right entry-actions">
         <button class="btn btn-outline-secondary" @click="editEntry">Edit</button>
       </div>
-      <h3>{{ entry.date | moment('ddd, MMM DD') }}</h3>
+      <h3>{{ entry.date | moment('ddd, MMM DD') }}<mood-emoji :mood="entry.mood" /></h3>
 
       <p>
         <b>Personal</b><br />
@@ -14,9 +14,9 @@
         <b>Work</b><br />
         {{ entry.work }}
       </p>
-      <p>
-        <b>Mood:</b> {{ entry.mood }}
-      </p>
+      <!-- <p>
+        <b>Mood:</b> {{ entry.mood }} <mood-emoji :mood="entry.mood" />
+      </p> -->
     </template>
 
     <hr v-if="includeHr" />
@@ -24,8 +24,11 @@
 </template>
 
 <script>
+import MoodEmoji from './MoodEmoji'
+
 export default {
   components: {
+    MoodEmoji
   },
   props: {
     entry: {

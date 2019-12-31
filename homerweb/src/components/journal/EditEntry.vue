@@ -20,7 +20,7 @@
             <select id="entry-mood" class="form-control" v-model="entry.mood">
               <option value=""></option>
               <option v-for="mood in moodOptions" :key="mood.name" :value="mood.name">
-                {{ mood.name }}
+                {{ mood.emoji }} {{ mood.name }}
               </option>
             </select>
           </div>
