@@ -9,6 +9,8 @@ import VueMoment from 'vue-moment'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faTrash, faCheckSquare, faChild, faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import Auth from '@aws-amplify/auth'
+import AuthConfig from './aws-exports'
 
 // TODO: Replace with SCSS version
 import 'bootstrap/dist/css/bootstrap.css'
@@ -16,6 +18,8 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import 'vue-multiselect/dist/vue-multiselect.min.css'
 
 Vue.config.productionTip = false
+
+Auth.configure(AuthConfig)
 
 Vue.use(BootstrapVue)
 Vue.use(VueMoment)

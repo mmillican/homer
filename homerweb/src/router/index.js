@@ -1,22 +1,14 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-import Auth from '@okta/okta-vue'
-
-Vue.use(Auth, {
-  issuer: process.env.VUE_APP_OKTA_URL,
-  clientId: process.env.VUE_APP_OKTA_CLIENTID,
-  redirectUri: process.env.VUE_APP_AUTH_REDIR_URL,
-  audience: 'http://localhost:8080',
-  scopes: ['openid', 'profile', 'email'],
-  pkce: true
-})
+import store from '../store'
 
 Vue.use(VueRouter)
 
 const routes = [
   { path: '/', name: 'home', component: Home, meta: { requiresAuth: true } },
-  { path: '/implicit/callback', component: Auth.handleCallback() },
+  { path: '/signin', name: 'signin', component: () => import('../views/auth/SignIn') },
+  { path: '/user/profile', name: 'userEditProfile', component: () => import('../views/auth/UpdateProfile'), meta: { requiresAuth: true } },
   { path: '/journal', name: 'journal', component: () => import('../views/journal/Journal.vue'), meta: { requiresAuth: true } },
   { path: '/shopping/:listId?', name: 'shopping', component: () => import('../views/Shopping.vue'), meta: { requiresAuth: true } },
   {
@@ -42,6 +34,23 @@ const router = new VueRouter({
   linkExactActiveClass: 'active'
 })
 
-router.beforeEach(Vue.prototype.$auth.authRedirectGuard())
+router.beforeEach((to, from, next) => {
+  console.log('route to', to)
+
+  // Is there meta / auth?
+  if (to.meta && to.meta.requiresAuth === true) {
+    if (store.getters['auth/isAuthenticated']) {
+      next()
+      return // continue on
+    }
+
+    let returnUrl = encodeURI(to.fullPath)
+    router.push({ name: 'signin', query: { return: returnUrl } })
+    return
+  }
+  next() // continue routing
+  // router.push({ name: 'home' })
+  // return
+})
 
 export default router
