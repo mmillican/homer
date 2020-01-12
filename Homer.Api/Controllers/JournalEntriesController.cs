@@ -33,7 +33,7 @@ namespace Homer.Api.Controllers
         [HttpGet("")]
         public async Task<ActionResult<IEnumerable<JournalEntry>>> GetJournalEntries()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue(ClaimTypes.Email);
 
             var conditions = new List<ScanCondition>();
             conditions.Add(new ScanCondition(nameof(JournalEntry.UserId), ScanOperator.Equal, userId));
@@ -47,7 +47,7 @@ namespace Homer.Api.Controllers
         [HttpGet("{date}")]
         public async Task<ActionResult<IEnumerable<JournalEntry>>> GetJournalEntriesForDate(DateTime date)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue(ClaimTypes.Email);
 
             var conditions = new List<ScanCondition>();
             conditions.Add(new ScanCondition(nameof(JournalEntry.UserId), ScanOperator.Equal, userId));
@@ -63,7 +63,7 @@ namespace Homer.Api.Controllers
             try
             {
                 var entry = new JournalEntry();
-                entry.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                entry.UserId = User.FindFirstValue(ClaimTypes.Email);
                 entry.Date = model.Date;
                 entry.Mood = model.Mood;
                 entry.Personal = model.Personal;

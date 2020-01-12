@@ -1,5 +1,5 @@
-import Vue from 'vue'
 import axios from 'axios'
+import store from '../../store'
 
 const client = axios.create({
   // baseURL: 'https://localhost:44362/',
@@ -11,7 +11,7 @@ const client = axios.create({
 
 export default {
   async execute (method, resource, data) {
-    let accessToken = await Vue.prototype.$auth.getAccessToken()
+    let accessToken = store.getters['auth/jwtToken']
 
     return client({
       method,

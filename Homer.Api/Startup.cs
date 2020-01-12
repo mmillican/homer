@@ -2,6 +2,8 @@
 using Homer.Api.Config;
 using Homer.Shared;
 using Homer.Shared.Data;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,10 +13,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Okta.AspNetCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Net;
 
 namespace Homer.Api
 {
@@ -60,19 +64,41 @@ namespace Homer.Api
                     .AllowCredentials());
             });
 
-            var oktaDomain = $"https://{Configuration["Auth:OktaDomain"]}";
+            var awsRegion = Configuration["AWS:Region"];
+            var awsCognitoUserPoolId = Configuration["AWS:CognitoUserPoolId"];
+            var awsCognitoUrl = $"https://cognito-idp.{awsRegion}.amazonaws.com/{awsCognitoUserPoolId}";
+            var awsCognitoAppClientId = Configuration["AWS:CognitoAppClientId"];
 
             services.AddAuthentication(options =>
             {
-                options.DefaultAuthenticateScheme = OktaDefaults.ApiAuthenticationScheme;
-                options.DefaultChallengeScheme = OktaDefaults.ApiAuthenticationScheme;
-                options.DefaultSignInScheme = OktaDefaults.ApiAuthenticationScheme;
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            .AddOktaWebApi(new OktaWebApiOptions()
+            .AddJwtBearer(options =>
             {
-                OktaDomain = oktaDomain,
-                Audience = "api://default"
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    IssuerSigningKeyResolver = (s, securityToken, identifier, parameters) =>
+                    {
+                        // get JsonWebKeySet from AWS
+                        var json = new WebClient().DownloadString(parameters.ValidIssuer + "/.well-known/jwks.json");
+                        // serialize the result
+                        var keys = JsonConvert.DeserializeObject<JsonWebKeySet>(json).Keys;
+                        // cast the result to be the type expected by IssuerSigningKeyResolver
+                        return (IEnumerable<SecurityKey>)keys;
+                    },
+
+                    ValidIssuer = awsCognitoUrl,
+                    ValidateIssuerSigningKey = true,
+                    ValidateIssuer = true,
+                    ValidateLifetime = true,
+                    ValidAudience = awsCognitoAppClientId,
+                    ValidateAudience = true
+                };
+                options.Audience = awsCognitoAppClientId;
+                options.Authority = awsCognitoUrl;
             });
+            
             services.AddAuthorization();
 
             services.AddSwaggerGen(c =>
@@ -81,12 +107,12 @@ namespace Homer.Api
                 c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                 {
                     Type = SecuritySchemeType.OAuth2,
-                    OpenIdConnectUrl = new Uri($"{oktaDomain}/.well-known/openid-configuration"),
+                    OpenIdConnectUrl = new Uri($"{awsCognitoUrl}/.well-known/openid-configuration"),
                     Flows = new OpenApiOAuthFlows { 
                         Implicit = new OpenApiOAuthFlow
                         {
-                            AuthorizationUrl= new Uri($"{oktaDomain}/oauth2/default/v1/authorize"),
-                            TokenUrl = new Uri($"{oktaDomain}/oauth2/default/v1/token"),
+                            AuthorizationUrl= new Uri($"{awsCognitoUrl}/oauth2/authorize"),
+                            TokenUrl = new Uri($"{awsCognitoUrl}/oauth2/token"),
                             Scopes = new Dictionary<string, string>
                             {
                                 { "openid", "" },
@@ -132,8 +158,6 @@ namespace Homer.Api
             app.UseHttpsRedirection();
 
             app.UseCors("default");
-            app.UseAuthentication();
-            app.UseAuthorization();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
@@ -146,7 +170,7 @@ namespace Homer.Api
                 c.RoutePrefix = string.Empty;
                 c.DocumentTitle = "Homer API Docs";
 
-                c.OAuthClientId("0oaoizww4uOTFm8hO0h7");
+                c.OAuthClientId(Configuration["AWS:CognitoAppClientId"]);
                 c.OAuthAdditionalQueryStringParams(new Dictionary<string, string>
                 {
                     { "nonce", Guid.NewGuid().ToString().Replace("-", "") }
@@ -154,6 +178,10 @@ namespace Homer.Api
             });
 
             app.UseRouting();
+            
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");

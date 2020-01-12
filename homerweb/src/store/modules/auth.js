@@ -3,7 +3,8 @@ import Auth from '@aws-amplify/auth'
 const state = {
   user: null,
   isAuthenticated: false,
-  authenticationStatus: null
+  authenticationStatus: null,
+  jwtToken: null
 }
 
 const getters = {
@@ -22,7 +23,8 @@ const getters = {
   },
   hasAuthenticationStatus: state => {
     return state.authenticationStatus !== null
-  }
+  },
+  jwtToken: state => state.jwtToken
 }
 
 const mutations = {
@@ -44,6 +46,9 @@ const mutations = {
     state.user = null
     state.userId = null
     state.isAuthenticated = null
+  },
+  setJwtToken (state, token) {
+    state.jwtToken = token
   }
 }
 
@@ -61,6 +66,8 @@ const actions = {
       if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
         await Auth.completeNewPassword(user, params.password)
       }
+      const jwtToken = (await Auth.currentSession()).getIdToken().getJwtToken()
+      context.commit('setJwtToken', jwtToken)
     } catch (err) {
       console.log(err)
       context.commit('setAuthenticationError', err)
