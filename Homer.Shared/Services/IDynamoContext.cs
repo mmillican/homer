@@ -5,6 +5,7 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.Util;
 using Homer.Shared.Configuration;
+using Homer.Shared.Entities.Contacts;
 using Homer.Shared.Entities.Journal;
 
 namespace Homer.Shared.Services
@@ -40,6 +41,7 @@ namespace Homer.Shared.Services
         {
             const string keyPrefix = "DynamoTables";
             AWSConfigsDynamoDB.Context.TypeMappings[typeof(JournalEntry)] = new TypeMapping(typeof(JournalEntry), _configurationHelper.GetValue("JournalEntryTable", keyPrefix));
+            AWSConfigsDynamoDB.Context.TypeMappings[typeof(Address)] = new TypeMapping(typeof(Address), _configurationHelper.GetValue("AddressTable", keyPrefix));
         }
 
         public async Task<TModel> GetByIdAsync<TModel>(string id) where TModel : class, new()

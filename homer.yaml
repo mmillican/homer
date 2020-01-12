@@ -55,6 +55,8 @@ Parameters:
     MinValue: 1
 
 Outputs:
+  AddressTableName:
+    Value: !Ref AddressTable
   JournalTableName:
     Value: !Ref JournalTable
 
@@ -76,6 +78,19 @@ Resources:
         CustomBucketWebsiteURL: !Ref CustomBucketWebsiteURL
       TemplateURL: https://s3.amazonaws.com/digops-stacks/version/16.9.0/s3-static-site.template
 
+  AddressTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: Id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: Id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: !Ref TableReadCapacity
+        WriteCapacityUnits: !Ref TableWriteCapacity
+        
   JournalTable:
     Type: AWS::DynamoDB::Table
     Properties:
