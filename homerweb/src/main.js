@@ -14,7 +14,7 @@ import AuthConfig from './aws-exports'
 
 // TODO: Replace with SCSS version
 import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
+// import 'bootstrap-vue/dist/bootstrap-vue.css'
 import 'vue-multiselect/dist/vue-multiselect.min.css'
 
 Vue.config.productionTip = false
