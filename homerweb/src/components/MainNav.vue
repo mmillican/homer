@@ -12,6 +12,7 @@
             <b-nav-item to="/meal-plans/meals">Meals</b-nav-item>
             <b-nav-item to="/meal-plans/planner">Meal Planner</b-nav-item>
             <b-nav-item to="/journal">Journal</b-nav-item>
+            <b-nav-item to="/addresses">Addresses</b-nav-item>
           </template>
         </b-navbar-nav>
 
