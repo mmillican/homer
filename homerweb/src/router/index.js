@@ -11,7 +11,16 @@ const routes = [
   { path: '/user/profile', name: 'userEditProfile', component: () => import('../views/auth/UpdateProfile'), meta: { requiresAuth: true } },
   { path: '/journal', name: 'journal', component: () => import('../views/journal/Journal.vue'), meta: { requiresAuth: true } },
   { path: '/shopping/:listId?', name: 'shopping', component: () => import('../views/Shopping.vue'), meta: { requiresAuth: true } },
-  { path: '/addresses', name: 'addresses', component: () => import('../views/contacts/AddressList.vue') },
+  {
+    path: '/addresses',
+    component: () => import('../views/contacts/Addresses.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      { path: '', name: 'address-list', component: () => import('../views/contacts/AddressList.vue') },
+      { path: 'new', name: 'create-address', component: () => import('../views/contacts/EditAddress.vue') },
+      { path: 'edit/:id', name: 'edit-address', component: () => import('../views/contacts/EditAddress.vue') }
+    ]
+  },
   {
     path: '/meal-plans',
     name: 'meal-planning',

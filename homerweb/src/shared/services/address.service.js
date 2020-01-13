@@ -11,7 +11,7 @@ export default class AddressService {
     return response
   }
 
-  async save (address) {
+  async saveAddress (address) {
     var response
     if (address.id) {
       response = await apiService.put(`addresses/${address.id}`, address)

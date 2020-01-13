@@ -1,6 +1,11 @@
 <template>
   <div class="address-list">
     <h1>Addresses</h1>
+
+    <div class="actions mb-2">
+      <b-button variant="outline-success" :to="{ name: 'create-address' }">Add Address</b-button>
+    </div>
+
     <div class="row row-cols-1 row-cols-md-3">
       <div class="col mb-4" v-for="address in addresses" :key="address.id">
         <div class="card address">
@@ -12,17 +17,17 @@
             </template>
             {{ address.city + ', ' + address.state + ' ' + address.zipCode }}
           </div>
-          <div class="card-footer py-2 d-flex justify-content-between align-items-center">
+          <div class="card-footer py-1 d-flex justify-content-between align-items-center">
             <!-- <a href="#">Edit</a> -->
             <div>
-              <b-dropdown id="dropdown-1" text="..." size="sm" variant="link" :no-caret="true">
+              <b-dropdown id="dropdown-1" text="..." size="sm" variant="link" :no-caret="true" toggle-class="pl-0">
                 <template slot="button-content">
                   <font-awesome-icon icon="cog" title="Actions" />
                 </template>
                 <b-dropdown-item :href="generateGoogleMapUrl(address)" :disabled="!address.addressLine1">Google Maps</b-dropdown-item>
                 <!-- TODO: Geocode the address and then can hook up Uber links <b-dropdown-item>Uber</b-dropdown-item> -->
                 <b-dropdown-divider></b-dropdown-divider>
-                <b-dropdown-item>Edit</b-dropdown-item>
+                <b-dropdown-item :to="{ name: 'edit-address', params: { id: address.id }}">Edit</b-dropdown-item>
               </b-dropdown>
             </div>
             <span v-if="address.needsUpdate" class="text-info">Needs update</span>
