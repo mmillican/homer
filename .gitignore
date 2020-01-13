@@ -260,6 +260,9 @@ paket-files/
 __pycache__/
 *.pyc
 
+# Custom
 _deploy/
 appsettings.Development.json
 .env*
+aws-exports.js
+stack-params.json
