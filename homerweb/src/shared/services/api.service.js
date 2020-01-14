@@ -1,5 +1,6 @@
 import axios from 'axios'
-import store from '../../store'
+// import store from '../../store'
+import Auth from '@aws-amplify/auth'
 
 const client = axios.create({
   // baseURL: 'https://localhost:44362/',
@@ -11,7 +12,9 @@ const client = axios.create({
 
 export default {
   async execute (method, resource, data) {
-    let accessToken = store.getters['auth/jwtToken']
+    // Don't get the token from the store in hopes that it will refresh
+    const accessToken = (await Auth.currentSession()).getIdToken().getJwtToken()
+    // let accessToken = store.getters['auth/jwtToken']
 
     return client({
       method,
