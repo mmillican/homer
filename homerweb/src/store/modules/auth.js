@@ -63,6 +63,7 @@ const actions = {
       const user = await Auth.signIn(params.username, params.password)
       context.commit('setUserAuthenticated', user)
 
+      // TODO: Should force user to update their password
       if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
         await Auth.completeNewPassword(user, params.password)
       }

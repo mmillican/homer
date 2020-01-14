@@ -4,6 +4,9 @@
       <b-col cols="4">
         <div class="b-form-1">
           <h1>Sign In</h1>
+
+          <auth-alerts />
+
           <b-form @submit.prevent="signIn">
             <b-form-group label="Email address" label-for="emailInput" :label-sr-only="true">
               <b-form-input
@@ -31,8 +34,8 @@
     <b-row class="justify-content-md-center">
       <b-col cols="4" v-if="!isAuthenticated">
         <p>
-          <b-link to="signUp">Create an account</b-link> or
-          <b-link to="passwordReset">reset password</b-link>
+          <!-- <b-link to="signUp">Create an account</b-link> or -->
+          <b-link to="passwordReset">Reset password</b-link>
         </p>
       </b-col>
       <b-col cols="4" v-if="isAuthenticated">
@@ -53,8 +56,12 @@
 <script>
 import { mapGetters } from 'vuex'
 import store from '@/store'
+import AuthAlerts from '../../components/AuthAlerts'
 
 export default {
+  components: {
+    AuthAlerts
+  },
   data () {
     return {
       email: '',
