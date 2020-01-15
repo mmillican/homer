@@ -8,7 +8,15 @@ Vue.use(VueRouter)
 const routes = [
   { path: '/', name: 'home', component: Home, meta: { requiresAuth: true } },
   { path: '/signin', name: 'signin', component: () => import('../views/auth/SignIn') },
-  { path: '/user/profile', name: 'userEditProfile', component: () => import('../views/auth/UpdateProfile'), meta: { requiresAuth: true } },
+  {
+    path: '/user',
+    component: () => import('../views/auth/UserProfile.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      { path: 'password', name: 'changePassword', component: () => import('../views/auth/ChangePassword'), meta: { requiresAuth: true } },
+      { path: 'profile', name: 'userEditProfile', component: () => import('../views/auth/UpdateProfile'), meta: { requiresAuth: true } }
+    ]
+  },
   { path: '/journal', name: 'journal', component: () => import('../views/journal/Journal.vue'), meta: { requiresAuth: true } },
   { path: '/shopping/:listId?', name: 'shopping', component: () => import('../views/Shopping.vue'), meta: { requiresAuth: true } },
   {

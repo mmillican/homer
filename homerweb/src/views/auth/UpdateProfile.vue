@@ -2,6 +2,10 @@
   <div class="journal-entry-editor">
     <h1>Update Profile</h1>
 
+    <div class="actions my-2">
+      <router-link to="/user/password">Change password</router-link>
+    </div>
+
     <div class="row">
       <div class="col-md-6">
         <form @submit.prevent="saveProfile" v-if="user">

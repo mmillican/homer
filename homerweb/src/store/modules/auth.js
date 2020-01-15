@@ -29,6 +29,13 @@ const getters = {
 }
 
 const mutations = {
+  setAuthenticationSuccess (state, msg) {
+    state.authenticationStatus = {
+      state: 'success',
+      message: msg,
+      variant: 'success'
+    }
+  },
   setAuthenticationError (state, err) {
     state.authenticationStatus = {
       state: 'failed',
@@ -84,6 +91,22 @@ const actions = {
     }
     context.commit('clearAuthentication', null)
   },
+  changePassword: async (context, params) => {
+    if (params.confirmNewPassword !== params.newPassword) {
+      context.commit('setAuthenticationError', { message: 'New passwords do not match.' })
+      return
+    }
+
+    try {
+      let user = await Auth.currentAuthenticatedUser()
+
+      await Auth.changePassword(user, params.currentPassword, params.newPassword)
+      context.commit('setAuthenticationSuccess', 'Your password has been changed.')
+    } catch (err) {
+      console.log('Error changing password', err)
+      context.commit('setAuthenticationError', err)
+    }
+  },
   updateUser: async (context, params) => {
     try {
       let user = await Auth.currentAuthenticatedUser()
@@ -108,7 +131,6 @@ const actions = {
       console.error('Error updating user profile', err)
     }
   }
-  // TODO remaining methods
 }
 
 export default {
