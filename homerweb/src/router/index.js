@@ -45,8 +45,6 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  console.log('route to', to)
-
   // Is there meta / auth?
   if (to.meta && to.meta.requiresAuth === true) {
     if (store.getters['auth/isAuthenticated']) {
@@ -59,8 +57,6 @@ router.beforeEach((to, from, next) => {
     return
   }
   next() // continue routing
-  // router.push({ name: 'home' })
-  // return
 })
 
 export default router
