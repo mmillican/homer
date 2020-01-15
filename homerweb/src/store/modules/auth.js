@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import Auth from '@aws-amplify/auth'
 
 const state = {
@@ -12,9 +13,9 @@ const getters = {
   profile: state => {
     return {
       username: state.user.username,
-      email: state.user.attributes.email,
-      firstName: state.user.attributes.given_name,
-      lastName: state.user.attributes.family_name
+      email: state.user.attributes ? state.user.attributes.email : '',
+      firstName: state.user.attributes ? state.user.attributes.given_name : '',
+      lastName: state.user.attributes ? state.user.attributes.family_name : ''
     }
   },
   isAuthenticated: state => state.isAuthenticated,
