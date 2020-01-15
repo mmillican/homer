@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-row class="justify-content-md-center">
-      <b-col cols="4">
+      <b-col cols="12" md="6">
         <div class="b-form-1">
           <h1>Sign In</h1>
 
