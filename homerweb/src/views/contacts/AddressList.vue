@@ -6,8 +6,19 @@
       <b-button variant="outline-success" :to="{ name: 'create-address' }">Add Address</b-button>
     </div>
 
+    <div class="search my-4">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="basic-addon1">
+            <font-awesome-icon icon="search" title="Search" />
+          </span>
+        </div>
+        <input type="text" v-model="query" class="form-control" placeholder="Filter by last name" aria-label="Last name" aria-describedby="search-addon-buttons">
+      </div>
+    </div>
+
     <div class="row row-cols-1 row-cols-md-3">
-      <div class="col mb-4" v-for="address in addresses" :key="address.id">
+      <div class="col mb-4" v-for="address in filteredAddreses" :key="address.id">
         <div class="card address">
           <div class="card-body">
             <h5>{{ address.lastName }} <small>{{ address.firstName }}</small></h5>
@@ -45,11 +56,18 @@ import { mapGetters } from 'vuex'
 export default {
   data () {
     return {
-
+      query: null
     }
   },
   computed: {
-    ...mapGetters('address', [ 'addresses' ])
+    ...mapGetters('address', [ 'addresses' ]),
+    filteredAddreses: function () {
+      if (this.query) {
+        return this.addresses.filter(x => x.lastName.toLowerCase().includes(this.query.toLowerCase()))
+      } else {
+        return this.addresses
+      }
+    }
   },
   async created () {
     await this.getAddresses()
