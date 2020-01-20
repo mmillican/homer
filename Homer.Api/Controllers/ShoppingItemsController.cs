@@ -1,15 +1,11 @@
-﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using Homer.Api.Models.Shopping;
-using Homer.Shared.Data;
+﻿using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.DocumentModel;
 using Homer.Shared.Entities.Shopping;
-using Homer.Shared.Entities.TaskLists;
+using Homer.Shared.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Homer.Api.Controllers
@@ -18,72 +14,74 @@ namespace Homer.Api.Controllers
     [ApiController]
     public class ShoppingItemsController : ControllerBase
     {
-        private readonly IRepository<ShoppingList> _shoppingListRepository;
-        private readonly IRepository<ShoppingItem> _shoppingItemRepository;
-        private readonly IMapper _mapper;
+        private readonly IDataContext _dataContext;
         private readonly ILogger<ShoppingItemsController> _logger;
 
-        public ShoppingItemsController(IRepository<ShoppingList> shoppingListRepository,
-            IRepository<ShoppingItem> shoppingItemRepository,
-            IMapper mapper,
+        public ShoppingItemsController(IDataContext dataContext,
             ILogger<ShoppingItemsController> logger)
         {
-            _shoppingListRepository = shoppingListRepository;
-            _shoppingItemRepository = shoppingItemRepository;
-            _mapper = mapper;
+            _dataContext = dataContext;
             _logger = logger;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ShoppingItemModel>>> GetItems([FromRoute] int listId, [FromQuery] bool? purchased = false)
+        public async Task<ActionResult<IEnumerable<ShoppingItem>>> GetItems([FromRoute] Guid listId, [FromQuery] bool? purchased = false)
         {
-            var items = await _shoppingItemRepository.Table
-                .Where(x => x.ListId == listId
-                    && (!purchased.HasValue || x.PurchasedOn.HasValue == purchased.Value))
-                .ProjectTo<ShoppingItemModel>(_mapper.ConfigurationProvider)
-                .ToListAsync();
+            var scanConditions = new List<ScanCondition>
+            {
+                new ScanCondition(nameof(ShoppingItem.ListId), ScanOperator.Equal, listId.ToString())
+            };
 
-            return items;
+            if (purchased.HasValue && purchased.Value)
+            {
+                scanConditions.Add(new ScanCondition(nameof(ShoppingItem.PurchasedOn), ScanOperator.IsNotNull));
+            }
+            else if (purchased.HasValue && !purchased.Value)
+            {
+                scanConditions.Add(new ScanCondition(nameof(ShoppingItem.PurchasedOn), ScanOperator.IsNull));
+            }
+
+            var items = await _dataContext.GetAsync<ShoppingItem>(scanConditions);
+
+            return Ok(items);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ShoppingItemModel>> GetItem(int listId, int id)
+        public async Task<ActionResult<ShoppingItem>> GetItem(Guid listId, Guid id)
         {
-            var item = await _shoppingItemRepository.GetByIdAsync(id);
-            if (item == null || item.ListId != listId)
+            var item = await _dataContext.GetByIdAsync<ShoppingItem>(id.ToString());
+            if (item == null || item.ListId != listId.ToString())
             {
                 return NotFound();
             }
 
-            var model = _mapper.Map<ShoppingItemModel>(item);
-            return model;
+            return Ok(item);
         }
 
         [HttpPost]
-        public async Task<ActionResult<TodoList>> Create(int listId, [Bind("Name", "Description")] ShoppingItemModel model)
+        public async Task<ActionResult<ShoppingItem>> Create(Guid listId, [Bind("Name", "Description")] ShoppingItem model)
         {
-            var listExists = await _shoppingListRepository.Table.AnyAsync(x => x.Id == listId);
-            if (!listExists)
+            var shoppingList = await _dataContext.GetByIdAsync<ShoppingList>(listId.ToString());
+            if (shoppingList == null) 
             {
-                _logger.LogInformation("List {id} does not exist", listId);
-                return NotFound();
+                return NotFound("List does not exist");
             }
 
             try
             {
                 var item = new ShoppingItem
                 {
-                    ListId = listId,
+                    ListId = listId.ToString(),
                     Name = model.Name,
                     Description = model.Description,
                     CreatedOn = DateTime.UtcNow,
                 };
 
-                await _shoppingItemRepository.CreateAsync(item);
+                await _dataContext.SaveAsync(item);
+                model.Id = item.Id;
 
                 _logger.LogInformation("Created shopping item");
 
-                model = _mapper.Map<ShoppingItemModel>(item);
                 return CreatedAtAction(nameof(GetItem), new { listId, id = model.Id }, model);
             }
             catch(Exception ex)
@@ -94,12 +92,12 @@ namespace Homer.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int listId, int id, ShoppingItemModel model)
+        public async Task<IActionResult> Update(Guid listId, Guid id, ShoppingItem model)
         {
             try
             {
-                var item = await _shoppingItemRepository.GetByIdAsync(id);
-                if (item == null || item.ListId != listId)
+                var item = await _dataContext.GetByIdAsync<ShoppingItem>(id.ToString());
+                if (item == null || item.ListId != listId.ToString())
                 {
                     return NotFound();
                 }
@@ -108,7 +106,7 @@ namespace Homer.Api.Controllers
                 item.Description = model.Description;
                 item.PurchasedOn = model.PurchasedOn;
 
-                await _shoppingItemRepository.UpdateAsync(item);
+                await _dataContext.SaveAsync(item);
 
                 _logger.LogInformation("Updated shopping item {id}", id);
 
@@ -122,17 +120,17 @@ namespace Homer.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int listId, int id)
+        public async Task<IActionResult> Delete(Guid listId, Guid id)
         {
             try
             {
-                var item = await _shoppingItemRepository.GetByIdAsync(id);
-                if (item == null || item.ListId != listId)
+                var item = await _dataContext.GetByIdAsync<ShoppingItem>(id.ToString());
+                if (item == null || item.ListId != listId.ToString())
                 {
                     return NotFound();
                 }
 
-                await _shoppingItemRepository.DeleteAsync(item);
+                await _dataContext.DeleteAsync(item);
 
                 _logger.LogInformation("Deleted shopping item {id}", id);
 

@@ -7,6 +7,7 @@ using Amazon.Util;
 using Homer.Shared.Configuration;
 using Homer.Shared.Entities.Contacts;
 using Homer.Shared.Entities.Journal;
+using Homer.Shared.Entities.Shopping;
 
 namespace Homer.Shared.Services
 {
@@ -40,8 +41,16 @@ namespace Homer.Shared.Services
         private void Initialize()
         {
             const string keyPrefix = "DynamoTables";
-            AWSConfigsDynamoDB.Context.TypeMappings[typeof(JournalEntry)] = new TypeMapping(typeof(JournalEntry), _configurationHelper.GetValue("JournalEntryTable", keyPrefix));
-            AWSConfigsDynamoDB.Context.TypeMappings[typeof(Address)] = new TypeMapping(typeof(Address), _configurationHelper.GetValue("AddressTable", keyPrefix));
+            AWSConfigsDynamoDB.Context.TypeMappings[typeof(JournalEntry)] = 
+                new TypeMapping(typeof(JournalEntry), _configurationHelper.GetValue("JournalEntryTable", keyPrefix));
+
+            AWSConfigsDynamoDB.Context.TypeMappings[typeof(Address)] = 
+                new TypeMapping(typeof(Address), _configurationHelper.GetValue("AddressTable", keyPrefix));
+
+            AWSConfigsDynamoDB.Context.TypeMappings[typeof(ShoppingList)] = 
+                new TypeMapping(typeof(ShoppingList), _configurationHelper.GetValue("ShoppingListTable", keyPrefix));
+            AWSConfigsDynamoDB.Context.TypeMappings[typeof(ShoppingItem)] = 
+                new TypeMapping(typeof(ShoppingItem), _configurationHelper.GetValue("ShoppingItemTable", keyPrefix));
         }
 
         public async Task<TModel> GetByIdAsync<TModel>(string id) where TModel : class, new()

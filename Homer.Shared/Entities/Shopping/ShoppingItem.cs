@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace Homer.Shared.Entities.Shopping
 {
     public class ShoppingItem
     {
-        public int Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
-        public int ListId { get; set; }
-        [ForeignKey(nameof(ListId))]
-        public virtual ShoppingList List { get; set; }
+        public string ListId { get; set; }
 
         [Required, MaxLength(50)]
         public string Name { get; set; }

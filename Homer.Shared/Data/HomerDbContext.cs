@@ -13,9 +13,6 @@ namespace Homer.Shared.Data
         public DbSet<TodoList> TodoLists { get; set; }
         public DbSet<TodoItem> TodoItems { get; set; }
 
-        public DbSet<ShoppingList> ShoppingLists { get; set; }
-        public DbSet<ShoppingItem> ShoppingItems { get; set; }
-
         public DbSet<Meal> Meals { get; set; }
         public DbSet<ScheduledMeal> ScheduledMeals { get; set; }
 
