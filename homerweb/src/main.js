@@ -7,7 +7,7 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueMoment from 'vue-moment'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faTrash, faCheckSquare, faChild, faStar, faCog, faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faEdit, faTrash, faCheckSquare, faChild, faStar, faCog, faSearch, faMapMarked } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import Auth from '@aws-amplify/auth'
 import AuthConfig from './aws-exports'
@@ -26,7 +26,7 @@ Vue.use(VueMoment)
 
 Vue.use(VueAxios, axios)
 
-library.add(faTrash, faCheckSquare, faChild, faStar, faCog, faSearch)
+library.add(faEdit, faTrash, faCheckSquare, faChild, faStar, faCog, faSearch, faMapMarked)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
